@@ -1,0 +1,81 @@
+Jogo da Vida - Reversão de Estado
+Equipe:
+
+Nome: Bruno Crestani
+GRR: 20221240
+Nome: Gustavo Jakobi
+GRR: 20221253 
+Descrição do Problema
+O objetivo do projeto foi implementar um programa em C que calcula um estado anterior de uma configuração do Jogo da Vida (Conway's Game of Life), com base nas regras do jogo. O estado anterior gerado deve minimizar o número de células vivas. O programa usa um solver SAT (Satisfiability Solver) para encontrar esse estado e validar a reversibilidade da solução.
+
+Estratégia Utilizada
+A abordagem adotada para resolver o problema foi a seguinte:
+
+Representação do Estado do Jogo:
+Cada célula do tabuleiro foi representada como uma variável booleana em um modelo SAT. Utilizamos a biblioteca Z3 para criar e resolver as restrições baseadas nas regras do Jogo da Vida.
+
+Definição de Restrições:
+Para cada célula, foram aplicadas as regras do Jogo da Vida para determinar como ela deveria evoluir, levando em consideração a quantidade de vizinhos vivos.
+
+Minimização de Células Vivas:
+O modelo foi configurado para minimizar o número total de células vivas no estado anterior, utilizando o otimizador do Z3.
+
+Verificação da Solução:
+Foi implementada uma função de verificação para validar se o estado anterior gerado leva ao estado atual fornecido. Se o estado anterior for válido, ele será aceito; caso contrário, a solução será descartada.
+
+Função de Verificação Condicional:
+A verificação só é executada se o código for compilado com o flag -DVERIFY. Caso o código seja compilado sem o flag, a verificação será ignorada.
+
+Compilação Condicional com -DVERIFY:
+A partir desta versão, o programa agora pode ser compilado com ou sem o flag -DVERIFY para habilitar ou desabilitar a verificação da solução:
+
+Com verificação: Quando o programa é compilado com make verify, a verificação do estado anterior gerado é executada e o resultado é impresso.
+Sem verificação: Quando o programa é compilado normalmente (make), a verificação é desativada e o programa se concentra em encontrar o estado anterior, sem validar sua reversibilidade.
+Exibição do Estado em Caso de Falha (Eden):
+Quando o solver não encontra um estado anterior válido, o programa imprime o tamanho da matriz e um estado totalmente zero, indicando que não é possível gerar um estado anterior válido.
+
+Conteúdo do Projeto
+main.cpp:
+Contém a implementação principal, que resolve o problema utilizando o solver SAT e a biblioteca Z3. A lógica de verificação do estado anterior está encapsulada em um bloco condicional com a macro -DVERIFY.
+
+utils.h:
+Declara funções auxiliares, como readMatrix para ler a matriz de entrada e verifyGameState para validar a solução gerada.
+
+Makefile:
+Script para compilar o projeto. O flag -DVERIFY é adicionado no Makefile para ativar a verificação quando necessário, e a compilação sem a verificação também é suportada.
+
+Execução
+Para compilar e executar o programa com a verificação ativada, siga os seguintes passos:
+
+Instalar Dependência (Z3):
+Antes de compilar, é necessário instalar a biblioteca Z3. Você pode fazer isso utilizando o comando:
+
+sudo apt install libz3-dev
+Compilar com Verificação: Para compilar com a funcionalidade de verificação ativada, use:
+
+make verify
+
+Compilar sem Verificação: Para compilar sem a verificação (modo padrão), use:
+make
+
+Executar o Programa: Após a compilação, execute o programa da seguinte forma, fornecendo a entrada através da entrada padrão ou de um arquivo:
+
+Com entrada interativa:
+
+./reverseGameOfLife
+Com entrada via arquivo:
+
+./reverseGameOfLife < input.txt
+Exemplo de Saída com Verificação: Quando compilado com verificação ativada, o programa exibirá o resultado da validação após calcular o estado anterior:
+
+4 6
+0 0 0 0 0 0
+0 0 1 1 0 0
+0 0 0 1 0 0
+0 0 0 1 0 0
+
+Verification: Valid solution! Previous state leads to current state.
+
+Caso a verificação falhe, a mensagem será algo como:
+
+Verification: Invalid solution. Previous state does not generate current state.
